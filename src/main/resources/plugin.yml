@@ -1,0 +1,4 @@
+name: WidenCoins
+version: '${project.version}'
+main: it.mikeslab.widencoins.WidenCoins
+api-version: '1.20'

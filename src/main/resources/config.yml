@@ -1,0 +1,10 @@
+database:
+  type: MONGODB # Choose from: REDIS, MONGODB
+  host: cluster0.mqkev3k.mongodb.net
+  port: 27017
+  username: mikeslab
+  password: mikeslab
+  database: blog
+  key: "coins" # When using Redis, this stands for the key name
+  table: "test" # When using MongoDB, this stands for the collection name
+language: "messages_en.yml"

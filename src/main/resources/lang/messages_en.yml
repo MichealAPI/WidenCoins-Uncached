@@ -1,0 +1,11 @@
+prefix: "&9&lWidenCoins &8» &r"
+coin:
+  given: "&aYou have given &e%player% &a%amount% coins."
+  received: "&aYou have received &e%amount% &acoins"
+  taken: "&aYou have taken &e%amount% coins from &e%player%"
+  set: "&aYou have set &e%player%'s &acoins to &e%amount%"
+  reset: "&aYou have reset &e%player%'s &acoins"
+  view: "&a%player% &ahas &e%amount% &acoins"
+  view-self: "&aYou have &e%amount% &acoins"
+  not-enough: "&cThe player does not have enough coins"
+no-permission: "&cYou do not have permission to do that"
