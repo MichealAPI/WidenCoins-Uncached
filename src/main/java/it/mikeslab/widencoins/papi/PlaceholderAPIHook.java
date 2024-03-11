@@ -27,7 +27,7 @@ public class PlaceholderAPIHook {
 
         } else {
             LoggerUtil.log(
-                    Level.SEVERE,
+                    Level.WARNING,
                     LoggerUtil.LogSource.API,
                     "PlaceholderAPI not found, disabling PlaceholderAPI expansion"
             );
