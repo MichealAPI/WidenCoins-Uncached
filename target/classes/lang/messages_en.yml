@@ -11,3 +11,5 @@ coin:
 no-permission: "&cYou do not have permission to do that"
 currency-name-singular: "coin"
 currency-name-plural: "coins"
+reload-success: "&aThe plugin has been reloaded"
+invalid-amount: "&cInvalid amount, value must be positive"

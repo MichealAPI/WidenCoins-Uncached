@@ -35,11 +35,31 @@ public class LangHandler {
 
 
     /**
-     * Get the language string from the language file
+     * Get the language string from the language file with the prefix
      * @param key the key to get the value from
      * @return the value of the key
      */
     public String get(LangKey key) {
+
+        StringBuilder stringWithPrefix = new StringBuilder();
+
+        if(prefix != null) {
+            stringWithPrefix.append(prefix);
+        }
+
+        String value = this.getString(key);
+
+        stringWithPrefix.append(value);
+
+        return stringWithPrefix.toString();
+    }
+
+    /**
+     * Get the language string from the language file without the prefix
+     * @param key the key to get the value from
+     * @return the value of the key
+     */
+    public String getString(LangKey key) {
 
         if(langConfig == null) {
             LoggerUtil.log(Level.SEVERE, LoggerUtil.LogSource.CONFIG, "Language file not loaded, defaulting...");
@@ -48,25 +68,13 @@ public class LangHandler {
 
         // check if the key is already in the cache
         if(langCacheMap.containsKey(key)) {
-
-            // notParsed means it's not color parsed
-            StringBuilder stringNotParsed = new StringBuilder();
-
-            // if prefix is loaded, add it to the string
-            if(prefix != null) {
-                stringNotParsed.append(prefix);
-            }
-
-            // add the value to the string
-            stringNotParsed.append(langCacheMap.get(key));
-
-            return ChatColor.color(stringNotParsed.toString());
+            return ChatColor.color(langCacheMap.get(key));
         }
 
         // if not, add it to the cache
         langCacheMap.put(key, langConfig.getString(key.getPath(), key.getDefaultValue()));
 
-        return this.get(key);
+        return this.getString(key);
     }
 
 
@@ -93,6 +101,18 @@ public class LangHandler {
 
         this.prefix = this.get(LangKey.PREFIX);
 
+    }
+
+    /**
+     * Reload the language file
+     */
+    public void reload() {
+
+        // Note: this.prefix is set to null here to prevent the prefix from being cached
+        this.prefix = null;
+
+        this.langCacheMap.clear();
+        this.load();
     }
 
 

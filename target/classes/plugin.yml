@@ -1,5 +1,5 @@
 name: WidenCoins
-version: '1.0-SNAPSHOT'
+version: '1.5-005'
 main: it.mikeslab.widencoins.WidenCoins
 api-version: '1.20'
 

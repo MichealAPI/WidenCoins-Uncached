@@ -9,6 +9,7 @@ import it.mikeslab.widencoins.database.DatabaseImpl;
 import it.mikeslab.widencoins.database.URIBuilder;
 import it.mikeslab.widencoins.util.LoggerUtil;
 import lombok.RequiredArgsConstructor;
+import org.apache.logging.log4j.core.config.Configurator;
 import org.bson.BsonDocument;
 import org.bson.BsonInt64;
 import org.bson.Document;
@@ -36,6 +37,12 @@ public class MongoDBImpl implements DatabaseImpl {
      */
     @Override
     public boolean connect() {
+
+        // Set the log level to ERROR for the MongoDB driver
+        Configurator.setLevel(
+                "org.mongodb.driver",
+                org.apache.logging.log4j.Level.WARN
+        );
 
         ServerApi serverApi = ServerApi.builder()
                 .version(ServerApiVersion.V1)

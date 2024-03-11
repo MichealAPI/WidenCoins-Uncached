@@ -14,6 +14,9 @@ public class PlaceholderAPIHook {
     private final WidenCoins instance;
     private final CacheHandler cacheHandler;
 
+    /**
+     * Hooks the PlaceholderAPI expansion
+     */
     public void hook() {
 
         if(Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
@@ -22,7 +25,7 @@ public class PlaceholderAPIHook {
             LoggerUtil.log(
                     Level.INFO,
                     LoggerUtil.LogSource.API,
-                    "PlaceholderAPI hooked to " + instance.getName()
+                    "PlaceholderAPI hooked into " + instance.getName()
             );
 
         } else {
@@ -35,6 +38,11 @@ public class PlaceholderAPIHook {
     }
 
 
+    /**
+     * Unhooks the PlaceholderAPI expansion
+     * Note: this PlaceholderAPI expansion is supposed to be persistent across reloads
+     *       so no need to unhook it on plugin disable
+     */
     public void unhook() {
         if(Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
             CoinExpansion coinExpansion = new CoinExpansion(instance, cacheHandler);

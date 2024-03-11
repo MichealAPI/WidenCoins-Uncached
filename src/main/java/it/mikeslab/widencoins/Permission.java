@@ -8,6 +8,8 @@ public class Permission {
             SET_COINS = "widencoins.set",
             RESET_COINS = "widencoins.reset",
             VIEW_COINS_OTHERS = "widencoins.view.others",
-            VIEW_COINS_SELF = "widencoins.view.self";
+            VIEW_COINS_SELF = "widencoins.view.self",
+            COMMAND_HELP = "widencoins.help",
+            COMMAND_RELOAD = "widencoins.reload";
 
 }

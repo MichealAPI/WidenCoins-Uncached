@@ -1,5 +1,7 @@
 package it.mikeslab.widencoins;
 
+import co.aikar.commands.CommandReplacements;
+import co.aikar.commands.ConditionFailedException;
 import co.aikar.commands.PaperCommandManager;
 import it.mikeslab.widencoins.command.CoinCommand;
 import it.mikeslab.widencoins.database.DBConfigHandler;
@@ -7,31 +9,38 @@ import it.mikeslab.widencoins.database.caching.CacheHandler;
 import it.mikeslab.widencoins.economy.EconomyImplementer;
 import it.mikeslab.widencoins.economy.VaultHook;
 import it.mikeslab.widencoins.lang.LangHandler;
+import it.mikeslab.widencoins.lang.LangKey;
 import it.mikeslab.widencoins.papi.PlaceholderAPIHook;
 import it.mikeslab.widencoins.util.LoggerUtil;
+import org.apache.logging.log4j.core.config.Configurator;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.util.logging.Level;
+
 public final class WidenCoins extends JavaPlugin {
 
     public static String COINS_KEY;
 
+    public CacheHandler cacheHandler;
+    public LangHandler langHandler;
     private DBConfigHandler dbConfigHandler;
-    private CacheHandler cacheHandler;
-    private LangHandler langHandler;
     private VaultHook vaultHook;
     private PlaceholderAPIHook placeholderAPIHook;
     private boolean customEconomyEnabled;
 
     public EconomyImplementer economyImplementer;
 
+
     @Override
     public void onEnable() {
         // Plugin startup logic
 
         saveDefaultConfig();
+
+        // Set the plugin name for the LoggerUtil
+        LoggerUtil.setPluginName(this.getName());
 
         // Default key for coins in the database
         COINS_KEY = this.getConfig().getString("database.key", "coins");
@@ -94,8 +103,27 @@ public final class WidenCoins extends JavaPlugin {
     private void registerCommands() {
         PaperCommandManager manager = new PaperCommandManager(this);
 
+        String commandAliases = this.getConfig().getString("command-aliases", "coins");
+
+        CommandReplacements replacements = manager.getCommandReplacements();
+        replacements.addReplacement("%command-aliases%", commandAliases);
+
+        manager.getCommandConditions().addCondition(Double.class, "positive", (c, exec, value) -> {
+
+            if(value == null) {
+                return;
+            }
+
+            if(value <= 0) {
+                throw new ConditionFailedException(langHandler.getString(LangKey.INVALID_AMOUNT));
+            }
+
+
+        });
+
         // register commands
-        manager.registerCommand(new CoinCommand(cacheHandler, langHandler));
+        manager.registerCommand(new CoinCommand(this));
+
 
         manager.enableUnstableAPI("help");
     }

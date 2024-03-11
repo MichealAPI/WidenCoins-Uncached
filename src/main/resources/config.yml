@@ -6,5 +6,6 @@ database:
   database: blog
   collection: "test" # When using MongoDB, this stands for the collection name
 language: "messages_en.yml"
+command-aliases: "coin|coins"
 custom-economy:
   enabled: false
