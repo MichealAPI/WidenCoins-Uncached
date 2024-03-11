@@ -1,0 +1,4 @@
+name: WidenCoins
+version: '1.0-SNAPSHOT'
+main: it.mikeslab.widencoins.WidenCoins
+api-version: '1.20'

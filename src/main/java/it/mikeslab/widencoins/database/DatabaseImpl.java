@@ -5,22 +5,13 @@ import java.util.Map;
 public interface DatabaseImpl {
 
     boolean connect();
-
     boolean disconnect();
+    boolean upsert(String collection, String key, Map<String, String> values);
+    boolean delete(String collection, String key);
+    boolean isConnected(boolean silent);
+    boolean exists(String collection, String key);
+    boolean createCollection(String collection);
+    boolean dropCollection(String collection);
+    Map<String, String> select(String collection, String key);
 
-    boolean isConnected();
-
-    boolean createTable(String name, String... columns);
-
-    boolean deleteTable(String name);
-
-    boolean insert(String table, String key, Map<String, String> values);
-
-    boolean update(String table, String key, Map<String, String> values);
-
-    boolean delete(String table, String key);
-
-    boolean exists(String table, String key);
-
-    Map<String, String> select(String table, String key);
 }

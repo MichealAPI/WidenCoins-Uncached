@@ -4,6 +4,7 @@ import com.mongodb.*;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.UpdateOptions;
 import it.mikeslab.widencoins.database.DatabaseImpl;
 import it.mikeslab.widencoins.database.URIBuilder;
 import it.mikeslab.widencoins.util.LoggerUtil;
@@ -16,23 +17,23 @@ import org.bson.conversions.Bson;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
-import java.util.logging.Logger;
-
-
 
 /**
- * Collections are improperly called "tables" in this implementation
- * due to the fact that we support multiple databases,
- * each with its own structure
+ * MongoDB's implementation of the Database interface.
  */
 @RequiredArgsConstructor
 public class MongoDBImpl implements DatabaseImpl {
 
-    // No need of collection since we call them, improperly, "tables"
+    // No need of collection since we call them, improperly, "collections"
     private final URIBuilder uriBuilder;
     private MongoClient mongoClient;
     private MongoDatabase database;
 
+
+    /**
+     * Connect to the database
+     * @return true if the client was connected, false otherwise
+     */
     @Override
     public boolean connect() {
 
@@ -50,27 +51,14 @@ public class MongoDBImpl implements DatabaseImpl {
         this.mongoClient = MongoClients.create(settings);
         this.database = mongoClient.getDatabase(uriBuilder.getDatabase());
 
-        try {
-            Bson command = new BsonDocument("ping", new BsonInt64(1));
-            Document commandResult = database.runCommand(command);
-            LoggerUtil.log(
-                    Level.INFO,
-                    LoggerUtil.LogSource.DATABASE,
-                    "Pinged your deployment. You successfully connected to MongoDB!"
-            );
-
-        } catch (MongoException me) {
-            LoggerUtil.log(
-                    Level.SEVERE,
-                    LoggerUtil.LogSource.DATABASE,
-                    "Error while connecting to MongoDB: " + me.getMessage()
-            );
-            return false;
-        }
-
-        return true;
+        return isConnected(false);
     }
 
+
+    /**
+     * Disconnect from the database
+     * @return true if the client was disconnected, false otherwise
+     */
     @Override
     public boolean disconnect() {
 
@@ -86,8 +74,13 @@ public class MongoDBImpl implements DatabaseImpl {
         return true;
     }
 
+
+    /**
+     * Check if the client is connected
+     * @return true if the client is connected, false otherwise
+     */
     @Override
-    public boolean isConnected() {
+    public boolean isConnected(boolean silent) {
 
         // Preventing NullPointerException in case the client is null
         if (this.mongoClient == null) {
@@ -99,6 +92,10 @@ public class MongoDBImpl implements DatabaseImpl {
             // Send a ping to confirm a successful connection
             Bson command = new BsonDocument("ping", new BsonInt64(1));
             Document commandResult = database.runCommand(command);
+
+            if (!silent) {
+                LoggerUtil.log(Level.INFO, LoggerUtil.LogSource.DATABASE, "Pinged your deployment. You successfully connected to MongoDB!");
+            }
 
         } catch (MongoException me) {
             LoggerUtil.log(Level.SEVERE,
@@ -114,9 +111,13 @@ public class MongoDBImpl implements DatabaseImpl {
     }
 
 
-
+    /**
+     * Create a collection
+     * @param name the name of the collection to create
+     * @return true if the collection was created, false otherwise
+     */
     @Override
-    public boolean createTable(String name, String... columns) {
+    public boolean createCollection(String name) {
 
         try {
             database.createCollection(name);
@@ -133,9 +134,12 @@ public class MongoDBImpl implements DatabaseImpl {
     }
 
 
-
-    @Override
-    public boolean deleteTable(String name) {
+    /**
+     * Drop a collection
+     * @param name the name of the collection to drop
+     * @return true if the collection was dropped, false otherwise
+     */
+    public boolean dropCollection(String name) {
 
         try {
             database.getCollection(name).drop();
@@ -151,19 +155,31 @@ public class MongoDBImpl implements DatabaseImpl {
         return true;
     }
 
-    @Override
-    public boolean insert(String table, String key, Map<String, String> values) {
 
-        // Values is an unmodifiable map, so we need to create a new one
-        Map<String, String> tempValues = new HashMap<>(values);
-        tempValues.put("key", key);
+
+    /**
+     * Insert or update a document in a collection
+     * @param collection the collection to insert into
+     * @param key the key to insert, for this implementation it's the UUID
+     * @param values the values to insert
+     * @return true if the document was inserted, false otherwise
+     */
+    @Override
+    public boolean upsert(String collection, String key, Map<String, String> values) {
 
         try {
-            database.getCollection(table).insertOne(new Document(tempValues));
+
+            UpdateOptions options = new UpdateOptions().upsert(true);
+
+            database.getCollection(collection).updateOne(
+                    new Document("uuid", key),
+                    new Document("$set", new Document(values)),
+                    options);
+
         } catch (MongoException me) {
             LoggerUtil.log(Level.WARNING,
                     LoggerUtil.LogSource.DATABASE,
-                    "Error while inserting into MongoDB: " + me.getMessage()
+                    "Error while upserting in MongoDB: " + me.getMessage()
             );
             return false;
         }
@@ -171,28 +187,17 @@ public class MongoDBImpl implements DatabaseImpl {
         return true;
     }
 
+    /**
+     * Delete a document from a collection
+     * @param collection the collection to delete from
+     * @param key the key to delete, for this implementation it's the UUID
+     * @return true if the document was deleted, false otherwise
+     */
     @Override
-    public boolean update(String table, String key, Map<String, String> values) {
+    public boolean delete(String collection, String key) {
 
         try {
-            database.getCollection(table).updateOne(new Document("key", key), new Document("$set", new Document(values)));
-
-        } catch (MongoException me) {
-            LoggerUtil.log(Level.WARNING,
-                    LoggerUtil.LogSource.DATABASE,
-                    "Error while updating MongoDB: " + me.getMessage()
-            );
-            return false;
-        }
-
-        return true;
-    }
-
-    @Override
-    public boolean delete(String table, String key) {
-
-        try {
-            database.getCollection(table).deleteOne(new Document("key", key));
+            database.getCollection(collection).deleteOne(new Document("uuid", key));
 
         } catch (MongoException me) {
             LoggerUtil.log(Level.WARNING,
@@ -205,11 +210,17 @@ public class MongoDBImpl implements DatabaseImpl {
         return true;
     }
 
+    /**
+     * Check if a key exists in a collection
+     * @param collection the collection to check
+     * @param key the key to check
+     * @return true if the key exists, false otherwise
+     */
     @Override
-    public boolean exists(String table, String key) {
+    public boolean exists(String collection, String key) {
 
         try {
-            Document result = database.getCollection(table).find(new Document("key", key)).first();
+            Document result = database.getCollection(collection).find(new Document("uuid", key)).first();
 
             return result != null;
 
@@ -223,11 +234,17 @@ public class MongoDBImpl implements DatabaseImpl {
         return false;
     }
 
+    /**
+     * Select a document from a collection
+     * @param collection the collection to select from
+     * @param key the key to select, for this implementation it's the UUID
+     * @return a Map<String, String> with the result where the key is the field name and the value is the field value
+     */
     @Override
-    public Map<String, String> select(String table, String key) {
+    public Map<String, String> select(String collection, String key) {
 
         try {
-            Document result = database.getCollection(table).find(new Document("key", key)).first();
+            Document result = database.getCollection(collection).find(new Document("uuid", key)).first();
 
             Map<String, String> resultMap = new HashMap<>();
 
@@ -250,6 +267,10 @@ public class MongoDBImpl implements DatabaseImpl {
     }
 
 
+    /**
+     * Get the URI to connect to the database
+     * @return the URI
+     */
     public String getUri() {
 
         return "mongodb+srv://" + uriBuilder.getUsername() + ":"
@@ -258,4 +279,5 @@ public class MongoDBImpl implements DatabaseImpl {
                                 + "/?appName=WidenCoins";
         
     }
+
 }

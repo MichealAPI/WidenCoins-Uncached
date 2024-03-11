@@ -2,11 +2,12 @@ package it.mikeslab.widencoins;
 
 import co.aikar.commands.PaperCommandManager;
 import it.mikeslab.widencoins.command.CoinCommand;
-import it.mikeslab.widencoins.command.helper.CoinDBHandler;
 import it.mikeslab.widencoins.database.DBConfigHandler;
-import it.mikeslab.widencoins.database.Repository;
+import it.mikeslab.widencoins.database.caching.CacheHandler;
+import it.mikeslab.widencoins.economy.EconomyImplementer;
+import it.mikeslab.widencoins.economy.VaultHook;
+import it.mikeslab.widencoins.lang.LangHandler;
 import it.mikeslab.widencoins.util.LoggerUtil;
-import it.mikeslab.widencoins.util.lang.LangHandler;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -17,8 +18,12 @@ public final class WidenCoins extends JavaPlugin {
     public static String COINS_KEY;
 
     private DBConfigHandler dbConfigHandler;
-    private CoinDBHandler coinDBHandler;
+    private CacheHandler cacheHandler;
     private LangHandler langHandler;
+    private VaultHook vaultHook;
+    private boolean customEconomyEnabled;
+
+    public EconomyImplementer economyImplementer;
 
     @Override
     public void onEnable() {
@@ -33,9 +38,8 @@ public final class WidenCoins extends JavaPlugin {
         this.initDatabaseConnection();
 
         // Initialize util which is used for the coin command, it's based on our database connection
-        // Previously performed
-        Repository repository = dbConfigHandler.getRepository();
-        this.coinDBHandler = new CoinDBHandler(repository);
+
+        this.cacheHandler = new CacheHandler(dbConfigHandler);
 
         // Initialize languages
         this.initLanguages();
@@ -43,15 +47,34 @@ public final class WidenCoins extends JavaPlugin {
         // Register commands
         this.registerCommands();
 
+        // Hooks in Vault and initializes the economy, if enabled
+        this.customEconomyEnabled = this.getConfig().getBoolean(
+                "custom-economy.enabled",
+                false
+        );
+
+        if(customEconomyEnabled) {
+
+            this.initCustomEconomy();
+
+        }
 
 
     }
 
     @Override
     public void onDisable() {
+
+        // Saves all stored data to the MongoDB database instance
+        this.cacheHandler.saveAll();
+
         this.dbConfigHandler
                 .getDatabase()
                 .disconnect();
+
+        if(customEconomyEnabled) {
+            this.vaultHook.unhook();
+        }
     }
 
 
@@ -64,10 +87,29 @@ public final class WidenCoins extends JavaPlugin {
         PaperCommandManager manager = new PaperCommandManager(this);
 
         // register commands
-        manager.registerCommand(new CoinCommand(coinDBHandler, langHandler));
+        manager.registerCommand(new CoinCommand(cacheHandler, langHandler));
 
         manager.enableUnstableAPI("help");
     }
+
+    private void initCustomEconomy() {
+
+        if(this.getServer().getPluginManager().getPlugin("Vault") == null) {
+            LoggerUtil.log(Level.SEVERE, LoggerUtil.LogSource.CONFIG, "Vault not found, disabling custom economy");
+            return;
+        }
+
+        this.economyImplementer = new EconomyImplementer(
+                this.langHandler,
+                this.cacheHandler
+        );
+
+        this.vaultHook = new VaultHook(this);
+
+        this.vaultHook.hook();
+
+    }
+
 
     private void initLanguages() {
 

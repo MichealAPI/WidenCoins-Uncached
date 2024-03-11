@@ -1,4 +1,4 @@
-package it.mikeslab.widencoins.util.lang;
+package it.mikeslab.widencoins.lang;
 
 import it.mikeslab.widencoins.util.LoggerUtil;
 

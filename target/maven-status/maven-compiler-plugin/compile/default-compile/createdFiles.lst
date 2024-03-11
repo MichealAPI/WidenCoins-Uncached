@@ -1,0 +1,16 @@
+it\mikeslab\widencoins\util\LoggerUtil.class
+it\mikeslab\widencoins\lang\LangKey.class
+it\mikeslab\widencoins\util\LoggerUtil$LogSource.class
+it\mikeslab\widencoins\lang\ChatColor.class
+it\mikeslab\widencoins\lang\LangHandler.class
+it\mikeslab\widencoins\Permission.class
+it\mikeslab\widencoins\economy\EconomyImplementer.class
+it\mikeslab\widencoins\database\caching\CacheHandler.class
+it\mikeslab\widencoins\database\DBConfigHandler.class
+it\mikeslab\widencoins\database\mongo\MongoDBImpl.class
+it\mikeslab\widencoins\WidenCoins.class
+it\mikeslab\widencoins\economy\VaultHook.class
+it\mikeslab\widencoins\database\DatabaseImpl.class
+it\mikeslab\widencoins\database\URIBuilder$URIBuilderBuilder.class
+it\mikeslab\widencoins\database\URIBuilder.class
+it\mikeslab\widencoins\command\CoinCommand.class
