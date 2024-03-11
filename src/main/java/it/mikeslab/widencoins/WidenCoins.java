@@ -7,6 +7,7 @@ import it.mikeslab.widencoins.database.caching.CacheHandler;
 import it.mikeslab.widencoins.economy.EconomyImplementer;
 import it.mikeslab.widencoins.economy.VaultHook;
 import it.mikeslab.widencoins.lang.LangHandler;
+import it.mikeslab.widencoins.papi.PlaceholderAPIHook;
 import it.mikeslab.widencoins.util.LoggerUtil;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -21,6 +22,7 @@ public final class WidenCoins extends JavaPlugin {
     private CacheHandler cacheHandler;
     private LangHandler langHandler;
     private VaultHook vaultHook;
+    private PlaceholderAPIHook placeholderAPIHook;
     private boolean customEconomyEnabled;
 
     public EconomyImplementer economyImplementer;
@@ -59,6 +61,9 @@ public final class WidenCoins extends JavaPlugin {
 
         }
 
+        this.placeholderAPIHook = new PlaceholderAPIHook(this, cacheHandler);
+        this.placeholderAPIHook.hook();
+
 
     }
 
@@ -75,6 +80,9 @@ public final class WidenCoins extends JavaPlugin {
         if(customEconomyEnabled) {
             this.vaultHook.unhook();
         }
+
+        // Note: PlaceholderAPIHook is not unhooked here, because it's supposed to be persistent across reloads
+        // placeholderAPIHook.unhook();
     }
 
 

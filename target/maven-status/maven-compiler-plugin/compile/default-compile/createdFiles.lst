@@ -9,8 +9,10 @@ it\mikeslab\widencoins\database\caching\CacheHandler.class
 it\mikeslab\widencoins\database\DBConfigHandler.class
 it\mikeslab\widencoins\database\mongo\MongoDBImpl.class
 it\mikeslab\widencoins\WidenCoins.class
+it\mikeslab\widencoins\papi\CoinExpansion.class
 it\mikeslab\widencoins\economy\VaultHook.class
 it\mikeslab\widencoins\database\DatabaseImpl.class
 it\mikeslab\widencoins\database\URIBuilder$URIBuilderBuilder.class
 it\mikeslab\widencoins\database\URIBuilder.class
+it\mikeslab\widencoins\papi\PlaceholderAPIHook.class
 it\mikeslab\widencoins\command\CoinCommand.class
