@@ -42,10 +42,7 @@ public class DBConfigHandler {
     private URIBuilder fromConfig() {
 
         return URIBuilder.builder()
-                .host(databaseSection.getString("host"))
-                .username(databaseSection.getString("username"))
-                .password(databaseSection.getString("password"))
-                .port(databaseSection.getInt("port"))
+                .uri(databaseSection.getString("uri"))
                 .database(databaseSection.getString("database"))
                 .collection(databaseSection.getString("collection"))
                 .build();

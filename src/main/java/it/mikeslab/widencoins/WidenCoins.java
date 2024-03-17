@@ -5,7 +5,7 @@ import co.aikar.commands.ConditionFailedException;
 import co.aikar.commands.PaperCommandManager;
 import it.mikeslab.widencoins.command.CoinCommand;
 import it.mikeslab.widencoins.database.DBConfigHandler;
-import it.mikeslab.widencoins.database.caching.CacheHandler;
+import it.mikeslab.widencoins.database.caching.CoinHandler;
 import it.mikeslab.widencoins.economy.EconomyImplementer;
 import it.mikeslab.widencoins.economy.VaultHook;
 import it.mikeslab.widencoins.lang.LangHandler;
@@ -23,7 +23,7 @@ public final class WidenCoins extends JavaPlugin {
 
     public static String COINS_KEY;
 
-    public CacheHandler cacheHandler;
+    public CoinHandler coinHandler;
     public LangHandler langHandler;
     private DBConfigHandler dbConfigHandler;
     private VaultHook vaultHook;
@@ -50,7 +50,7 @@ public final class WidenCoins extends JavaPlugin {
 
         // Initialize util which is used for the coin command, it's based on our database connection
 
-        this.cacheHandler = new CacheHandler(dbConfigHandler);
+        this.coinHandler = new CoinHandler(dbConfigHandler);
 
         // Initialize languages
         this.initLanguages();
@@ -70,7 +70,7 @@ public final class WidenCoins extends JavaPlugin {
 
         }
 
-        this.placeholderAPIHook = new PlaceholderAPIHook(this, cacheHandler);
+        this.placeholderAPIHook = new PlaceholderAPIHook(this, coinHandler);
         this.placeholderAPIHook.hook();
 
 
@@ -78,9 +78,6 @@ public final class WidenCoins extends JavaPlugin {
 
     @Override
     public void onDisable() {
-
-        // Saves all stored data to the MongoDB database instance
-        this.cacheHandler.saveAll();
 
         this.dbConfigHandler
                 .getDatabase()
@@ -139,7 +136,7 @@ public final class WidenCoins extends JavaPlugin {
 
         this.economyImplementer = new EconomyImplementer(
                 this.langHandler,
-                this.cacheHandler
+                this.coinHandler
         );
 
         this.vaultHook = new VaultHook(this);

@@ -48,7 +48,7 @@ public class MongoDBImpl implements DatabaseImpl {
                 .version(ServerApiVersion.V1)
                 .build();
 
-        String uri = this.getUri();
+        String uri = uriBuilder.getUri();
 
         MongoClientSettings settings = MongoClientSettings.builder()
                 .applyConnectionString(new ConnectionString(uri))
@@ -274,17 +274,5 @@ public class MongoDBImpl implements DatabaseImpl {
     }
 
 
-    /**
-     * Get the URI to connect to the database
-     * @return the URI
-     */
-    public String getUri() {
-
-        return "mongodb+srv://" + uriBuilder.getUsername() + ":"
-                                + uriBuilder.getPassword() + "@"
-                                + uriBuilder.getHost()
-                                + "/?appName=WidenCoins";
-        
-    }
 
 }

@@ -7,11 +7,7 @@ import lombok.Data;
 @Builder
 public class URIBuilder {
 
-    private final String host,
-                        username,
-                        password;
-
-    private final int port;
+    private final String uri;
 
     private String database,
                     collection;

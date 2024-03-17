@@ -1,8 +1,5 @@
 database:
-  host: cluster0.mqkev3k.mongodb.net
-  port: 27017
-  username: mikeslab
-  password: mikeslab
+  uri: "mongodb+srv://localhost/"
   database: blog
   collection: "test" # When using MongoDB, this stands for the collection name
 language: "messages_en.yml"

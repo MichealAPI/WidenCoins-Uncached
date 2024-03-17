@@ -1,7 +1,7 @@
 package it.mikeslab.widencoins.papi;
 
 import it.mikeslab.widencoins.WidenCoins;
-import it.mikeslab.widencoins.database.caching.CacheHandler;
+import it.mikeslab.widencoins.database.caching.CoinHandler;
 import lombok.RequiredArgsConstructor;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.entity.Player;
@@ -13,7 +13,7 @@ import java.util.UUID;
 public class CoinExpansion extends PlaceholderExpansion {
 
     private final WidenCoins instance;
-    private final CacheHandler cacheHandler;
+    private final CoinHandler coinHandler;
 
     @Override
     public @NotNull String getIdentifier() {
@@ -41,13 +41,13 @@ public class CoinExpansion extends PlaceholderExpansion {
         if(params.equalsIgnoreCase("balance")) {
             UUID playerUUID = player.getUniqueId();
 
-            return String.valueOf(cacheHandler.getCoins(playerUUID));
+            return String.valueOf(coinHandler.getCoins(playerUUID));
         }
 
         if(params.equalsIgnoreCase("balance_formatted")) {
             UUID playerUUID = player.getUniqueId();
 
-            return String.format("%,.2f", cacheHandler.getCoins(playerUUID));
+            return String.format("%,.2f", coinHandler.getCoins(playerUUID));
         }
 
         return null; // Placeholder is unknown by the expansion

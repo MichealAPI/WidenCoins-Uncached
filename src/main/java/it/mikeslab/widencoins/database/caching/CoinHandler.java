@@ -14,18 +14,18 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
-public class CacheHandler {
+public class CoinHandler {
 
-    private final LoadingCache<UUID, Map.Entry<Double, Boolean>> playerCoinsCache;
     private final double DEFAULT_COINS = 0.0;
     private final DatabaseImpl databaseImpl;
     private final String collection;
+    private final String fieldKey = WidenCoins.COINS_KEY;
 
     /**
      * Constructor
      * @param dbConfigHandler database configuration handler
      */
-    public CacheHandler(DBConfigHandler dbConfigHandler) {
+    public CoinHandler(DBConfigHandler dbConfigHandler) {
 
         // Get the database implementation
         this.databaseImpl = dbConfigHandler.getDatabase();
@@ -33,21 +33,6 @@ public class CacheHandler {
         // Get the collection
         this.collection = dbConfigHandler.getUriBuilder().getCollection();
 
-        playerCoinsCache = Caffeine.newBuilder()
-                .maximumSize(1000)
-                .build(k ->
-                        // Define default value
-                        new AbstractMap.SimpleEntry<>(Double.parseDouble(
-                                databaseImpl.select(
-                                        collection,
-                                        k.toString()
-                                ).getOrDefault(
-                                        WidenCoins.COINS_KEY, // If user is not in the database, return default value
-                                        String.valueOf(DEFAULT_COINS)
-                                )
-                        ), false) // This boolean is used to check if value got edited during the cache time
-
-                );
     }
 
 
@@ -57,7 +42,15 @@ public class CacheHandler {
      * @return amount of coins
      */
     public double getCoins(UUID playerUUID) {
-        return playerCoinsCache.get(playerUUID).getKey();
+        String playerUUIDAsString = playerUUID.toString();
+        Map<String, String> queryResult = databaseImpl.select(collection, playerUUIDAsString);
+
+        if(queryResult == null || queryResult.isEmpty()) {
+            return DEFAULT_COINS;
+        }
+
+        String coinsAsString = queryResult.get(fieldKey);
+        return Double.parseDouble(coinsAsString);
     }
 
 
@@ -67,7 +60,13 @@ public class CacheHandler {
      * @param amount amount of coins
      */
     public void setCoins(UUID playerUUID, double amount) {
-        playerCoinsCache.put(playerUUID, new AbstractMap.SimpleEntry<>(amount, true));
+        String playerUUIDAsString = playerUUID.toString();
+
+        databaseImpl.upsert(
+                collection,
+                playerUUIDAsString,
+                Map.of(WidenCoins.COINS_KEY, String.valueOf(amount))
+        );
     }
 
     /**
@@ -97,37 +96,4 @@ public class CacheHandler {
         return true;
     }
 
-
-    /**
-     * Save all the cache to the database
-     * Run this method when the plugin is being disabled
-     */
-    public void saveAll() {
-
-        Stopwatch stopwatch = Stopwatch.createStarted();
-
-        playerCoinsCache.asMap().forEach((k, v) -> {
-
-            // If the value got edited during the cache time, update the database
-            // This is useful to avoid unnecessary database calls
-
-            if (v.getValue()) {
-
-                // Upsert the value
-                databaseImpl.upsert(
-                        collection,
-                        k.toString(),
-                        Map.of(WidenCoins.COINS_KEY, String.valueOf(v.getKey()))
-                );
-            }
-
-        });
-
-        stopwatch.stop();
-        LoggerUtil.log(
-                Level.INFO,
-                LoggerUtil.LogSource.DATABASE,
-                "Cache saved to database in " + stopwatch.elapsed(TimeUnit.MILLISECONDS) + "ms"
-        );
-    }
 }
