@@ -1,7 +1,7 @@
 database:
   uri: "mongodb+srv://localhost/"
-  database: blog
-  collection: "test" # When using MongoDB, this stands for the collection name
+  database: test
+  collection: "test"
 language: "messages_en.yml"
 command-aliases: "coin|coins"
 custom-economy:

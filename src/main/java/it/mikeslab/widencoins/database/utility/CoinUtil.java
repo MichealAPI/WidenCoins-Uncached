@@ -31,12 +31,12 @@ public class CoinUtil {
 
     /**
      * Get the coins of a player
-     * @param playerUUID player UUID
+     * @param playerUsername player username
      * @return amount of coins
      */
-    public double getCoins(UUID playerUUID) {
-        String playerUUIDAsString = playerUUID.toString();
-        Map<String, String> queryResult = databaseImpl.select(collection, playerUUIDAsString);
+    public double getCoins(String playerUsername) {
+
+        Map<String, String> queryResult = databaseImpl.select(collection, playerUsername);
 
         if(queryResult == null || queryResult.isEmpty()) {
             return DEFAULT_COINS;
@@ -49,43 +49,42 @@ public class CoinUtil {
 
     /**
      * Set the coins of a player
-     * @param playerUUID player UUID
+     * @param playerUsername player username
      * @param amount amount of coins
      */
-    public void setCoins(UUID playerUUID, double amount) {
-        String playerUUIDAsString = playerUUID.toString();
+    public void setCoins(String playerUsername, double amount) {
 
         databaseImpl.upsert(
                 collection,
-                playerUUIDAsString,
+                playerUsername,
                 Map.of(WidenCoins.COINS_KEY, String.valueOf(amount))
         );
     }
 
     /**
      * Add coins to a player
-     * @param playerUUID player UUID
+     * @param playerUsername player username
      * @param amount amount of coins
      */
-    public void addCoins(UUID playerUUID, double amount) {
-        double currentAmount = getCoins(playerUUID);
-        setCoins(playerUUID, currentAmount + amount);
+    public void addCoins(String playerUsername, double amount) {
+        double currentAmount = getCoins(playerUsername);
+        setCoins(playerUsername, currentAmount + amount);
     }
 
     /**
      * Takes coins from a player
-     * @param playerUUID player UUID
+     * @param playerUsername player username
      * @param amount amount of coins
      * @return true if the player has enough coins, false otherwise
      */
-    public boolean takeCoins(UUID playerUUID, double amount) {
-        double currentAmount = getCoins(playerUUID);
+    public boolean takeCoins(String playerUsername, double amount) {
+        double currentAmount = getCoins(playerUsername);
 
         if(currentAmount - amount < 0) {
             return false;
         }
 
-        setCoins(playerUUID, currentAmount - amount);
+        setCoins(playerUsername, currentAmount - amount);
         return true;
     }
 

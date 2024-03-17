@@ -37,17 +37,14 @@ public class CoinExpansion extends PlaceholderExpansion {
 
     @Override
     public String onPlaceholderRequest(Player player, String params) {
+        String playerUsername = player.getName();
 
         if(params.equalsIgnoreCase("balance")) {
-            UUID playerUUID = player.getUniqueId();
-
-            return String.valueOf(coinUtil.getCoins(playerUUID));
+            return String.valueOf(coinUtil.getCoins(playerUsername));
         }
 
         if(params.equalsIgnoreCase("balance_formatted")) {
-            UUID playerUUID = player.getUniqueId();
-
-            return String.format("%,.2f", coinUtil.getCoins(playerUUID));
+            return String.format("%,.2f", coinUtil.getCoins(playerUsername));
         }
 
         return null; // Placeholder is unknown by the expansion

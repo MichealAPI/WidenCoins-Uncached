@@ -91,7 +91,7 @@ public class EconomyImplementer implements Economy {
 
     @Override
     public double getBalance(OfflinePlayer player) {
-        return coinUtil.getCoins(player.getUniqueId());
+        return coinUtil.getCoins(player.getName());
     }
 
     @Override
@@ -114,7 +114,7 @@ public class EconomyImplementer implements Economy {
 
     @Override
     public boolean has(OfflinePlayer player, double amount) {
-        return coinUtil.getCoins(player.getUniqueId()) >= amount;
+        return coinUtil.getCoins(player.getName()) >= amount;
     }
 
     @Override
@@ -139,11 +139,11 @@ public class EconomyImplementer implements Economy {
     public EconomyResponse withdrawPlayer(OfflinePlayer player, double amount) {
 
         if(player.isOnline()) {
-            coinUtil.takeCoins(player.getUniqueId(), amount);
+            coinUtil.takeCoins(player.getName(), amount);
 
             return new EconomyResponse(
                     amount,
-                    coinUtil.getCoins(player.getUniqueId()),
+                    coinUtil.getCoins(player.getName()),
                     EconomyResponse.ResponseType.SUCCESS,
                     ""
             );
@@ -182,11 +182,11 @@ public class EconomyImplementer implements Economy {
     public EconomyResponse depositPlayer(OfflinePlayer player, double amount) {
 
         if(player.isOnline()) {
-            coinUtil.addCoins(player.getUniqueId(), amount);
+            coinUtil.addCoins(player.getName(), amount);
 
             return new EconomyResponse(
                     amount,
-                    coinUtil.getCoins(player.getUniqueId()),
+                    coinUtil.getCoins(player.getName()),
                     EconomyResponse.ResponseType.SUCCESS,
                     ""
             );
@@ -280,7 +280,7 @@ public class EconomyImplementer implements Economy {
 
     @Override
     public boolean createPlayerAccount(OfflinePlayer player) {
-        coinUtil.addCoins(player.getUniqueId(), 0);
+        coinUtil.addCoins(player.getName(), 0);
         return true;
     }
 

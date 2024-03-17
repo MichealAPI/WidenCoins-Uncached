@@ -73,12 +73,12 @@ public class CoinCommand extends BaseCommand {
     public void onGive(CommandSender sender, OnlinePlayer target, @Conditions("positive") Double amount) {
 
         Player player = target.getPlayer();
-        UUID playerUUID = player.getUniqueId();
+        String playerUsername = player.getName();
 
-        coinUtil.addCoins(playerUUID, amount);
+        coinUtil.addCoins(playerUsername, amount);
 
         sender.sendMessage(langHandler.get(LangKey.COIN_GIVEN)
-                .replace("%player%", player.getName())
+                .replace("%player%", playerUsername)
                 .replace("%amount%", String.valueOf(amount))
         );
 
@@ -99,10 +99,10 @@ public class CoinCommand extends BaseCommand {
     public void onTake(CommandSender sender, OnlinePlayer target, @Conditions("positive") Double amount) {
 
         Player player = target.getPlayer();
-        UUID playerUUID = player.getUniqueId();
+        String playerUsername = player.getName();
 
         // returns false if the player doesn't have enough coins
-        boolean result = coinUtil.takeCoins(playerUUID, amount);
+        boolean result = coinUtil.takeCoins(playerUsername, amount);
 
         if(!result) {
             sender.sendMessage(langHandler.get(LangKey.COIN_NOT_ENOUGH));
@@ -110,7 +110,7 @@ public class CoinCommand extends BaseCommand {
         }
 
         // get current target's coins
-        double currentCoins = coinUtil.getCoins(playerUUID);
+        double currentCoins = coinUtil.getCoins(playerUsername);
 
         sender.sendMessage(langHandler.get(LangKey.COIN_TAKEN)
                 .replace("%player%", player.getName())
@@ -127,9 +127,9 @@ public class CoinCommand extends BaseCommand {
     public void onSet(CommandSender sender, OnlinePlayer target, @Conditions("positive") Double amount) {
 
         Player player = target.getPlayer();
-        UUID playerUUID = player.getUniqueId();
+        String playerUsername = player.getName();
 
-        coinUtil.setCoins(playerUUID, amount);
+        coinUtil.setCoins(playerUsername, amount);
 
         sender.sendMessage(langHandler.get(LangKey.COIN_SET)
                 .replace("%player%", player.getName())
@@ -145,9 +145,9 @@ public class CoinCommand extends BaseCommand {
     public void onReset(CommandSender sender, OnlinePlayer target) {
 
         Player player = target.getPlayer();
-        UUID playerUUID = player.getUniqueId();
+        String playerUsername = player.getName();
 
-        coinUtil.setCoins(playerUUID, 0);
+        coinUtil.setCoins(playerUsername, 0);
 
         sender.sendMessage(langHandler.get(LangKey.COIN_RESET)
                 .replace("%player%", player.getName())
@@ -170,13 +170,13 @@ public class CoinCommand extends BaseCommand {
         }
 
         Player player = target.getPlayer();
-        UUID playerUUID = player.getUniqueId();
+        String playerUsername = player.getName();
 
         boolean isSelf = sender == player;
 
         if(isSelf && sender.hasPermission(Permission.VIEW_COINS_SELF)) {
 
-            String coins = "" + coinUtil.getCoins(playerUUID);
+            String coins = "" + coinUtil.getCoins(playerUsername);
 
             sender.sendMessage(langHandler.get(LangKey.COIN_VIEW_SELF)
                     .replace("%amount%", coins)
@@ -188,10 +188,10 @@ public class CoinCommand extends BaseCommand {
 
         if(!isSelf && sender.hasPermission(Permission.VIEW_COINS_OTHERS)) {
 
-            String coins = "" + coinUtil.getCoins(playerUUID);
+            String coins = "" + coinUtil.getCoins(playerUsername);
 
             sender.sendMessage(langHandler.get(LangKey.COIN_VIEW_OTHER)
-                    .replace("%player%", player.getName())
+                    .replace("%player%", playerUsername)
                     .replace("%amount%", coins)
             );
 
