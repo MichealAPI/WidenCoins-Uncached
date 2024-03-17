@@ -161,36 +161,22 @@ public final class WidenCoins extends JavaPlugin {
             );
         }
 
+
         // Load selected language
-        String selectedLangFilename = this.getConfig().getString("language", null);
-
-        if(selectedLangFilename == null) {
-            LoggerUtil.log(Level.WARNING, LoggerUtil.LogSource.CONFIG, "No language selected, defaulting to '"
-                    + defaultLangFilename +
-                    "'"
-            );
-
-            this.getConfig().set("language", defaultLangFilename); // set default language
-            this.saveConfig();
-
-            selectedLangFilename = defaultLangFilename;
-        }
+        String selectedLangFilename = this.getConfig().getString("language", "");
 
 
         // Checking if selected language file really exists
         File selectedLangFile = new File(langFolder, selectedLangFilename);
 
         if(!selectedLangFile.exists()) {
-            LoggerUtil.log(Level.WARNING, LoggerUtil.LogSource.CONFIG, "Selected language file not found, defaulting to '"
-                    + defaultLangFilename +
-                    "'"
-            );
+            LoggerUtil.log(Level.WARNING, LoggerUtil.LogSource.CONFIG, "Invalid language file: " + selectedLangFilename + ", plug-in disabling");
 
-            selectedLangFilename = defaultLangFilename;
+            this.getServer().getPluginManager().disablePlugin(this);
         }
 
         // Load the language file
-        this.langHandler = new LangHandler(langFolder, selectedLangFilename);
+        this.langHandler = new LangHandler(langFolder, this);
 
     }
 

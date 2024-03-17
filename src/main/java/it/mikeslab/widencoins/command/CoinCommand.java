@@ -212,10 +212,11 @@ public class CoinCommand extends BaseCommand {
     public void onReload(CommandSender sender) {
 
         try {
-            langHandler.reload();
 
-            instance.saveConfig();
+            instance.saveDefaultConfig();
             instance.reloadConfig();
+
+            langHandler.reload();
 
             sender.sendMessage(langHandler.get(LangKey.RELOAD_SUCCESS));
         } catch (Exception e) {

@@ -3,6 +3,7 @@ package it.mikeslab.widencoins.lang;
 import it.mikeslab.widencoins.util.LoggerUtil;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.util.HashMap;
@@ -12,20 +13,25 @@ import java.util.logging.Level;
 public class LangHandler {
 
     private final File languageSubFolder;
-    private final String selectedLanguage;
+    private final JavaPlugin instance;
 
     private final Map<LangKey, String> langCacheMap;
     public FileConfiguration langConfig;
     private String prefix;
+    private String selectedLanguage;
+
 
     /**
      * Constructor
      * @param languageSubFolder the language subfolder
-     * @param language the language to use
+     * @param javaPlugin the JavaPlugin instance
      */
-    public LangHandler(File languageSubFolder, String language) {
+    public LangHandler(File languageSubFolder, JavaPlugin javaPlugin) {
+
+        this.instance = javaPlugin;
         this.languageSubFolder = languageSubFolder;
-        this.selectedLanguage = language;
+        this.selectedLanguage = instance.getConfig()
+                .getString("language");
 
         this.langCacheMap = new HashMap<>();
 
@@ -107,15 +113,15 @@ public class LangHandler {
      */
     public void reload() {
 
+        this.selectedLanguage = instance.getConfig()
+                .getString("language");
+
         // Note: this.prefix is set to null here to prevent the prefix from being cached
         this.prefix = null;
 
         this.langCacheMap.clear();
         this.load();
     }
-
-
-
 
 
 
