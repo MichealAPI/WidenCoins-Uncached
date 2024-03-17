@@ -5,7 +5,7 @@ import co.aikar.commands.ConditionFailedException;
 import co.aikar.commands.PaperCommandManager;
 import it.mikeslab.widencoins.command.CoinCommand;
 import it.mikeslab.widencoins.database.DBConfigHandler;
-import it.mikeslab.widencoins.database.caching.CoinHandler;
+import it.mikeslab.widencoins.database.utility.CoinUtil;
 import it.mikeslab.widencoins.economy.EconomyImplementer;
 import it.mikeslab.widencoins.economy.VaultHook;
 import it.mikeslab.widencoins.lang.LangHandler;
@@ -23,7 +23,7 @@ public final class WidenCoins extends JavaPlugin {
 
     public static String COINS_KEY;
 
-    public CoinHandler coinHandler;
+    public CoinUtil coinUtil;
     public LangHandler langHandler;
     private DBConfigHandler dbConfigHandler;
     private VaultHook vaultHook;
@@ -50,7 +50,7 @@ public final class WidenCoins extends JavaPlugin {
 
         // Initialize util which is used for the coin command, it's based on our database connection
 
-        this.coinHandler = new CoinHandler(dbConfigHandler);
+        this.coinUtil = new CoinUtil(dbConfigHandler);
 
         // Initialize languages
         this.initLanguages();
@@ -70,7 +70,7 @@ public final class WidenCoins extends JavaPlugin {
 
         }
 
-        this.placeholderAPIHook = new PlaceholderAPIHook(this, coinHandler);
+        this.placeholderAPIHook = new PlaceholderAPIHook(this, coinUtil);
         this.placeholderAPIHook.hook();
 
 
@@ -136,7 +136,7 @@ public final class WidenCoins extends JavaPlugin {
 
         this.economyImplementer = new EconomyImplementer(
                 this.langHandler,
-                this.coinHandler
+                this.coinUtil
         );
 
         this.vaultHook = new VaultHook(this);

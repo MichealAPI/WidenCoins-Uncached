@@ -1,20 +1,13 @@
-package it.mikeslab.widencoins.database.caching;
+package it.mikeslab.widencoins.database.utility;
 
-import com.github.benmanes.caffeine.cache.Caffeine;
-import com.github.benmanes.caffeine.cache.LoadingCache;
-import com.google.common.base.Stopwatch;
 import it.mikeslab.widencoins.WidenCoins;
 import it.mikeslab.widencoins.database.DBConfigHandler;
 import it.mikeslab.widencoins.database.DatabaseImpl;
-import it.mikeslab.widencoins.util.LoggerUtil;
 
-import java.util.AbstractMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
 
-public class CoinHandler {
+public class CoinUtil {
 
     private final double DEFAULT_COINS = 0.0;
     private final DatabaseImpl databaseImpl;
@@ -25,7 +18,7 @@ public class CoinHandler {
      * Constructor
      * @param dbConfigHandler database configuration handler
      */
-    public CoinHandler(DBConfigHandler dbConfigHandler) {
+    public CoinUtil(DBConfigHandler dbConfigHandler) {
 
         // Get the database implementation
         this.databaseImpl = dbConfigHandler.getDatabase();

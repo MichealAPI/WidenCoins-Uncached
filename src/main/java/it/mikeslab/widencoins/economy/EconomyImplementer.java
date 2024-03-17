@@ -1,6 +1,6 @@
 package it.mikeslab.widencoins.economy;
 
-import it.mikeslab.widencoins.database.caching.CoinHandler;
+import it.mikeslab.widencoins.database.utility.CoinUtil;
 import it.mikeslab.widencoins.lang.LangHandler;
 import it.mikeslab.widencoins.lang.LangKey;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +14,7 @@ import java.util.List;
 public class EconomyImplementer implements Economy {
 
     private final LangHandler langHandler;
-    private final CoinHandler coinHandler;
+    private final CoinUtil coinUtil;
 
     @Override
     public boolean isEnabled() {
@@ -91,7 +91,7 @@ public class EconomyImplementer implements Economy {
 
     @Override
     public double getBalance(OfflinePlayer player) {
-        return coinHandler.getCoins(player.getUniqueId());
+        return coinUtil.getCoins(player.getUniqueId());
     }
 
     @Override
@@ -114,7 +114,7 @@ public class EconomyImplementer implements Economy {
 
     @Override
     public boolean has(OfflinePlayer player, double amount) {
-        return coinHandler.getCoins(player.getUniqueId()) >= amount;
+        return coinUtil.getCoins(player.getUniqueId()) >= amount;
     }
 
     @Override
@@ -139,11 +139,11 @@ public class EconomyImplementer implements Economy {
     public EconomyResponse withdrawPlayer(OfflinePlayer player, double amount) {
 
         if(player.isOnline()) {
-            coinHandler.takeCoins(player.getUniqueId(), amount);
+            coinUtil.takeCoins(player.getUniqueId(), amount);
 
             return new EconomyResponse(
                     amount,
-                    coinHandler.getCoins(player.getUniqueId()),
+                    coinUtil.getCoins(player.getUniqueId()),
                     EconomyResponse.ResponseType.SUCCESS,
                     ""
             );
@@ -182,11 +182,11 @@ public class EconomyImplementer implements Economy {
     public EconomyResponse depositPlayer(OfflinePlayer player, double amount) {
 
         if(player.isOnline()) {
-            coinHandler.addCoins(player.getUniqueId(), amount);
+            coinUtil.addCoins(player.getUniqueId(), amount);
 
             return new EconomyResponse(
                     amount,
-                    coinHandler.getCoins(player.getUniqueId()),
+                    coinUtil.getCoins(player.getUniqueId()),
                     EconomyResponse.ResponseType.SUCCESS,
                     ""
             );
@@ -280,7 +280,7 @@ public class EconomyImplementer implements Economy {
 
     @Override
     public boolean createPlayerAccount(OfflinePlayer player) {
-        coinHandler.addCoins(player.getUniqueId(), 0);
+        coinUtil.addCoins(player.getUniqueId(), 0);
         return true;
     }
 

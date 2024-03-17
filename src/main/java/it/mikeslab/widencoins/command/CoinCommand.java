@@ -7,7 +7,7 @@ import co.aikar.commands.annotation.*;
 import co.aikar.commands.bukkit.contexts.OnlinePlayer;
 import it.mikeslab.widencoins.Permission;
 import it.mikeslab.widencoins.WidenCoins;
-import it.mikeslab.widencoins.database.caching.CoinHandler;
+import it.mikeslab.widencoins.database.utility.CoinUtil;
 import it.mikeslab.widencoins.lang.ChatColor;
 import it.mikeslab.widencoins.lang.LangHandler;
 import it.mikeslab.widencoins.lang.LangKey;
@@ -22,13 +22,13 @@ import java.util.logging.Level;
 public class CoinCommand extends BaseCommand {
 
     private final WidenCoins instance;
-    private final CoinHandler coinHandler;
+    private final CoinUtil coinUtil;
     private final LangHandler langHandler;
 
     public CoinCommand(WidenCoins instance) {
         this.instance = instance;
 
-        this.coinHandler = instance.coinHandler;
+        this.coinUtil = instance.coinUtil;
         this.langHandler = instance.langHandler;
     }
 
@@ -75,7 +75,7 @@ public class CoinCommand extends BaseCommand {
         Player player = target.getPlayer();
         UUID playerUUID = player.getUniqueId();
 
-        coinHandler.addCoins(playerUUID, amount);
+        coinUtil.addCoins(playerUUID, amount);
 
         sender.sendMessage(langHandler.get(LangKey.COIN_GIVEN)
                 .replace("%player%", player.getName())
@@ -102,7 +102,7 @@ public class CoinCommand extends BaseCommand {
         UUID playerUUID = player.getUniqueId();
 
         // returns false if the player doesn't have enough coins
-        boolean result = coinHandler.takeCoins(playerUUID, amount);
+        boolean result = coinUtil.takeCoins(playerUUID, amount);
 
         if(!result) {
             sender.sendMessage(langHandler.get(LangKey.COIN_NOT_ENOUGH));
@@ -110,7 +110,7 @@ public class CoinCommand extends BaseCommand {
         }
 
         // get current target's coins
-        double currentCoins = coinHandler.getCoins(playerUUID);
+        double currentCoins = coinUtil.getCoins(playerUUID);
 
         sender.sendMessage(langHandler.get(LangKey.COIN_TAKEN)
                 .replace("%player%", player.getName())
@@ -129,7 +129,7 @@ public class CoinCommand extends BaseCommand {
         Player player = target.getPlayer();
         UUID playerUUID = player.getUniqueId();
 
-        coinHandler.setCoins(playerUUID, amount);
+        coinUtil.setCoins(playerUUID, amount);
 
         sender.sendMessage(langHandler.get(LangKey.COIN_SET)
                 .replace("%player%", player.getName())
@@ -147,7 +147,7 @@ public class CoinCommand extends BaseCommand {
         Player player = target.getPlayer();
         UUID playerUUID = player.getUniqueId();
 
-        coinHandler.setCoins(playerUUID, 0);
+        coinUtil.setCoins(playerUUID, 0);
 
         sender.sendMessage(langHandler.get(LangKey.COIN_RESET)
                 .replace("%player%", player.getName())
@@ -176,7 +176,7 @@ public class CoinCommand extends BaseCommand {
 
         if(isSelf && sender.hasPermission(Permission.VIEW_COINS_SELF)) {
 
-            String coins = "" + coinHandler.getCoins(playerUUID);
+            String coins = "" + coinUtil.getCoins(playerUUID);
 
             sender.sendMessage(langHandler.get(LangKey.COIN_VIEW_SELF)
                     .replace("%amount%", coins)
@@ -188,7 +188,7 @@ public class CoinCommand extends BaseCommand {
 
         if(!isSelf && sender.hasPermission(Permission.VIEW_COINS_OTHERS)) {
 
-            String coins = "" + coinHandler.getCoins(playerUUID);
+            String coins = "" + coinUtil.getCoins(playerUUID);
 
             sender.sendMessage(langHandler.get(LangKey.COIN_VIEW_OTHER)
                     .replace("%player%", player.getName())

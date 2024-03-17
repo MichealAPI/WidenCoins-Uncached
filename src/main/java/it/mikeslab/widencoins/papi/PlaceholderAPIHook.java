@@ -1,7 +1,7 @@
 package it.mikeslab.widencoins.papi;
 
 import it.mikeslab.widencoins.WidenCoins;
-import it.mikeslab.widencoins.database.caching.CoinHandler;
+import it.mikeslab.widencoins.database.utility.CoinUtil;
 import it.mikeslab.widencoins.util.LoggerUtil;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;
@@ -12,7 +12,7 @@ import java.util.logging.Level;
 public class PlaceholderAPIHook {
 
     private final WidenCoins instance;
-    private final CoinHandler coinHandler;
+    private final CoinUtil coinUtil;
 
     /**
      * Hooks the PlaceholderAPI expansion
@@ -20,7 +20,7 @@ public class PlaceholderAPIHook {
     public void hook() {
 
         if(Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
-            new CoinExpansion(instance, coinHandler).register();
+            new CoinExpansion(instance, coinUtil).register();
 
             LoggerUtil.log(
                     Level.INFO,
@@ -45,7 +45,7 @@ public class PlaceholderAPIHook {
      */
     public void unhook() {
         if(Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
-            CoinExpansion coinExpansion = new CoinExpansion(instance, coinHandler);
+            CoinExpansion coinExpansion = new CoinExpansion(instance, coinUtil);
             coinExpansion.unregister();
 
             LoggerUtil.log(
