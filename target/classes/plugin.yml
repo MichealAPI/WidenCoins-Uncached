@@ -4,3 +4,7 @@ main: it.mikeslab.widencoins.WidenCoins
 api-version: '1.20'
 
 softdepend: [PlaceholderAPI]
+
+libraries:
+  - org.mongodb:mongodb-driver-sync:5.0.0
+  - com.github.ben-manes.caffeine:caffeine:3.1.8

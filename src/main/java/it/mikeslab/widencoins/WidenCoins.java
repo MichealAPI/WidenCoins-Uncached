@@ -12,11 +12,11 @@ import it.mikeslab.widencoins.lang.LangHandler;
 import it.mikeslab.widencoins.lang.LangKey;
 import it.mikeslab.widencoins.papi.PlaceholderAPIHook;
 import it.mikeslab.widencoins.util.LoggerUtil;
-import org.apache.logging.log4j.core.config.Configurator;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
+import java.util.Locale;
 import java.util.logging.Level;
 
 public final class WidenCoins extends JavaPlugin {
@@ -108,6 +108,8 @@ public final class WidenCoins extends JavaPlugin {
         CommandReplacements replacements = manager.getCommandReplacements();
         replacements.addReplacement("%command-aliases%", commandAliases);
 
+        manager.getLocales().loadLanguage(this.langHandler.langConfig, Locale.ENGLISH);
+
         manager.getCommandConditions().addCondition(Double.class, "positive", (c, exec, value) -> {
 
             if(value == null) {
@@ -154,12 +156,13 @@ public final class WidenCoins extends JavaPlugin {
 
         File langFolder = new File(this.getDataFolder(), "lang");
 
-
-        this.saveResource(
-                "lang" + File.separator + defaultLangFilename,
-                false
-        );
-
+        // If the folder doesn't exist, tries to create both the file and the folder
+        if(!langFolder.exists()) {
+            this.saveResource(
+                    "lang" + File.separator + defaultLangFilename,
+                    false
+            );
+        }
 
         // Load selected language
         String selectedLangFilename = this.getConfig().getString("language", null);

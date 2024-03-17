@@ -104,6 +104,13 @@
 
   <dependencies>
 
+      <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-clean-plugin -->
+      <dependency>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-clean-plugin</artifactId>
+          <version>3.3.2</version>
+      </dependency>
+
       <dependency>
           <groupId>io.papermc.paper</groupId>
           <artifactId>paper-api</artifactId>
@@ -135,12 +142,14 @@
           <groupId>com.github.ben-manes.caffeine</groupId>
           <artifactId>caffeine</artifactId>
           <version>3.1.8</version>
+          <scope>provided</scope>
       </dependency>
 
       <dependency>
           <groupId>org.mongodb</groupId>
           <artifactId>mongodb-driver-sync</artifactId>
           <version>5.0.0</version>
+          <scope>provided</scope>
       </dependency>
 
       <dependency>

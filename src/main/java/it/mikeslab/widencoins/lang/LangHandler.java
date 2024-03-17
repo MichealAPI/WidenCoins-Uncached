@@ -15,9 +15,8 @@ public class LangHandler {
     private final String selectedLanguage;
 
     private final Map<LangKey, String> langCacheMap;
-    private FileConfiguration langConfig;
+    public FileConfiguration langConfig;
     private String prefix;
-
 
     /**
      * Constructor
@@ -91,7 +90,7 @@ public class LangHandler {
 
             if(langFile.exists()) {
 
-                langConfig = YamlConfiguration.loadConfiguration(langFile);
+                this.langConfig = YamlConfiguration.loadConfiguration(langFile);
 
             } else {
                 LoggerUtil.log(Level.SEVERE, LoggerUtil.LogSource.CONFIG, "Language file not found: " + langFileName);

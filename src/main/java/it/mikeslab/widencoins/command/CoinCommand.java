@@ -114,8 +114,8 @@ public class CoinCommand extends BaseCommand {
 
         sender.sendMessage(langHandler.get(LangKey.COIN_TAKEN)
                 .replace("%player%", player.getName())
-                .replace("%amount%", String.valueOf(amount)
-                .replace("%current%", String.valueOf(currentCoins)))
+                .replace("%amount%", String.valueOf(amount))
+                .replace("%current%", String.valueOf(currentCoins))
         );
     }
 
