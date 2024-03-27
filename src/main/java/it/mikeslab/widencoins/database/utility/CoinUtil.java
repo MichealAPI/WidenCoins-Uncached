@@ -59,6 +59,7 @@ public class CoinUtil {
                 playerUsername,
                 Map.of(WidenCoins.COINS_KEY, String.valueOf(amount))
         );
+
     }
 
     /**

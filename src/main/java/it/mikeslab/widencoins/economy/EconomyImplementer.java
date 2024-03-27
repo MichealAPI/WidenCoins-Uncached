@@ -38,7 +38,7 @@ public class EconomyImplementer implements Economy {
 
     @Override
     public String format(double amount) {
-        return null;
+        return String.format("%,.2f", amount);
     }
 
     @Override
@@ -139,6 +139,7 @@ public class EconomyImplementer implements Economy {
     public EconomyResponse withdrawPlayer(OfflinePlayer player, double amount) {
 
         if(player.isOnline()) {
+
             coinUtil.takeCoins(player.getName(), amount);
 
             return new EconomyResponse(

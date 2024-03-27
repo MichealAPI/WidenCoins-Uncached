@@ -32,7 +32,6 @@ public class CoinCommand extends BaseCommand {
         this.langHandler = instance.langHandler;
     }
 
-    @Default
     @HelpCommand
     @Syntax("(command)")
     @Description("Show help")
@@ -155,7 +154,7 @@ public class CoinCommand extends BaseCommand {
     }
 
 
-    @Subcommand("view")
+    @Default
     @Description("View coins")
     @Syntax("(player)")
     @CommandCompletion("@players")
